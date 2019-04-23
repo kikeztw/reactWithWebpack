@@ -1,40 +1,48 @@
 //this is test webpack config
 //by carlos hurtado
-const path = require("path");
-const webpack = require("webpack");
-
+import path from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 module.exports = {
-  entry: "./src/index.js",
-  mode: "development",
-  module: {
-    rules : [
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /(node_modules|bower_components)/,
-        use: ['babel-loader', 'eslint-loader'],
-      },
-      {
-        test: /\.less$/,
-        use: [
-          'style-loader',
-          'css-loader',
-          'less-loader'
+    entry: path.join(__dirname, 'src', 'index.jsx'),
+    output: {
+        path: path.join(__dirname, 'build'),
+        filename: 'index.bundle.js'
+    },
+    mode: process.env.NODE_ENV || 'development',
+    resolve: {
+        modules: [
+            path.resolve(__dirname, 'src'),
+            'node_modules'
         ]
-      }
-    ]
-  },
-  resolve: { extensions: ["*", ".js", ".jsx"] },
-  output: {
-    path: path.resolve(__dirname, "dist/"),
-    publicPath: "/dist/",
-    filename: "bundle.js"
-  },
-  devServer: {
-    contentBase: path.join(__dirname, "public/"),
-    port: 3000,
-    publicPath: "http://localhost:3000/dist/",
-    hotOnly: true
-  },
-  plugins: [new webpack.HotModuleReplacementPlugin()]
+    },
+    devServer: {
+        contentBase: path.join(__dirname, 'src')
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: path.join(__dirname, 'src', 'index.html')
+        })
+    ],
+    module:{
+        rules:[
+            {
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
+                use:['babel-loader']
+            },
+            {
+                test:/\.(css|sass|scss)$/,
+                use:[
+                    'style-loader',
+                    'css-loader',
+                    'sass-loader'
+                ]
+            },
+            {
+                test:/\.(jpg|jpeg|png|gif|mp3|svg)$/,
+                loaders: ['file-loader']
+            }
+        ]
+    }
 };
